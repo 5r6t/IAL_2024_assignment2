@@ -28,7 +28,7 @@ Pokud v exa.c budete používat pomocné funkce, důrazně doporučuji zajistit 
 
 ## Testing
 Priložená je testovací aplikace, (`make test`, `make clean`).
-Poskytnuté testy nepokrývají vše a je doporučeno napsat si vlastní testy.
+Poskytnuté testy nepokrývají vše a je doporučeno **napsat si vlastní testy**.
 
 * Řešení musí být přeložitelné a spustitelné na serveru eva.fit.vutbr.cz.
 * Nedodržení zadání (zásahy do kostry, přejmenovaní souborů, nezachování adresářové struktury apod.) $${\color{red}\text{(body = 0)}}$$
