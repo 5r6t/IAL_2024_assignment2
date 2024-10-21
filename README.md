@@ -15,12 +15,12 @@
 - `btree/exa/exa.c`
 ```
 ## Odevzdat prostřednictvím STUDISu s **následovným pojmenováním**:
-
+```bash
 - `hashtable/hashtable.c` jako `hashtable.c`,
 - `btree/rec/btree.c` jako `btree-rec.c`,
 - `btree/iter/btree.c` jako `btree-iter.c`,
 - `btree/exa/exa.c` jako `btree-exa.c`,
-
+```
 ## Other files, your own functions
 Neodovzdávať iné súbory a neupravovať předpisy funkcí.
 Pomocné funkce by něměly být potřeba, pokud nejsou explicitně zmíněny. 
