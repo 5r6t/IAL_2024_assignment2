@@ -5,7 +5,7 @@
 - `hashtable` - tabulka s rozptýlenými položkami (3b),
 - `btree/rec` - generický binární vyhledávací strom a operace nad ním implementované rekurzivně (3b)
 - `btree/iter` - generický binární vyhledávací strom a operace nad ním implementované iterativně (3b)
-- `btree/exa` - triviální použití binárního vyhledávacího stromu (1b)
+- `btree/exa` - **triviální** použití binárního vyhledávacího stromu (1b)
 ```
 ## Vaší úlohou je doplnit těla funkcí v:
 ```bash
