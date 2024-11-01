@@ -19,7 +19,7 @@
  */
 void bst_init(bst_node_t **tree)
 {
-  
+    *tree = NULL;
 }
 
 /*
@@ -33,7 +33,18 @@ void bst_init(bst_node_t **tree)
  */
 bool bst_search(bst_node_t *tree, char key, bst_node_content_t **value)
 {
-  return false;
+  if (tree == NULL) return false;
+
+  if (key == tree->key) {
+    *value = &(tree->content);
+    return true;
+  }
+  else if (key < tree->key) {
+    return bst_search(tree->left, key, value);
+  }
+  else { //if (key > tree->key) 
+    return bst_search(tree->right, key, value);
+  }
 }
 
 /*
@@ -49,6 +60,29 @@ bool bst_search(bst_node_t *tree, char key, bst_node_content_t **value)
  */
 void bst_insert(bst_node_t **tree, char key, bst_node_content_t value)
 {
+  if (*tree == NULL)
+  {
+    *tree = (bst_node_t *)malloc(sizeof(bst_node_t));
+    if (*tree == NULL) {
+      fprintf(stderr, "Memory allocation failed.");
+      exit(1);
+    }
+    (*tree)->key = key;
+    (*tree)->content = value;
+    (*tree)->left = NULL;
+    (*tree)->right = NULL;
+    return;
+  }
+  
+  if (key == (*tree)->key) {
+    (*tree)->content = value;
+  }
+  else if (key < (*tree)->key) {
+    bst_insert(&((*tree)->left), key, value);
+  }
+  else {
+    bst_insert(&((*tree)->right), key, value);
+  }
 }
 
 /*
@@ -66,6 +100,18 @@ void bst_insert(bst_node_t **tree, char key, bst_node_content_t value)
  */
 void bst_replace_by_rightmost(bst_node_t *target, bst_node_t **tree)
 {
+  if (*tree == NULL) return;
+
+  if ((*tree)->right != NULL) {
+    bst_replace_by_rightmost(target, &((*tree)->right));
+  }
+  else {
+    target->key = (*tree)->key;
+    target->content = (*tree)->content;
+    bst_node_t *tmp = *tree;
+    *tree = (*tree)->left;
+    free(tmp);
+  }
 }
 
 /*
@@ -83,6 +129,31 @@ void bst_replace_by_rightmost(bst_node_t *target, bst_node_t **tree)
  */
 void bst_delete(bst_node_t **tree, char key)
 {
+  if (*tree == NULL) return;
+
+  if (key < (*tree)->key) {
+    bst_delete(&((*tree)->left), key);
+  }
+  else if (key > (*tree)->key) {
+    bst_delete(&((*tree)->right), key);
+  }
+  else { // (key = (*tree)->key);
+    bst_node_t *tmp;
+    if ((*tree)->left == NULL && (*tree)->right == NULL) {
+      free(*tree);
+      *tree = NULL;
+    }
+    else if ((*tree)->left == NULL || (*tree)->right == NULL) {
+      tmp = *tree;
+      *tree = (*tree)->left ? (*tree)->left : (*tree)->right; // either L or R
+      free(tmp);
+    }
+    else {
+      bst_replace_by_rightmost(*tree, &((*tree)->left));
+      bst_delete(&((*tree)->left), (*tree)->key);
+    }
+  }
+
 }
 
 /*
@@ -96,6 +167,12 @@ void bst_delete(bst_node_t **tree, char key)
  */
 void bst_dispose(bst_node_t **tree)
 {
+  if (*tree != NULL) {
+    bst_dispose(&(*tree)->left);
+    bst_dispose(&(*tree)->right);
+    free(*tree);
+    *tree = NULL;
+  }
 }
 
 /*
@@ -107,6 +184,10 @@ void bst_dispose(bst_node_t **tree)
  */
 void bst_preorder(bst_node_t *tree, bst_items_t *items)
 {
+  if (tree == NULL) return;
+  bst_add_node_to_items(tree, items);
+  bst_preorder(tree->left, items);
+  bst_preorder(tree->right,items);
 }
 
 /*
@@ -118,6 +199,10 @@ void bst_preorder(bst_node_t *tree, bst_items_t *items)
  */
 void bst_inorder(bst_node_t *tree, bst_items_t *items)
 {
+  if (tree == NULL) return;
+  bst_inorder(tree->left, items);
+  bst_add_node_to_items(tree, items);
+  bst_inorder(tree->right, items);
 }
 
 /*
@@ -129,4 +214,8 @@ void bst_inorder(bst_node_t *tree, bst_items_t *items)
  */
 void bst_postorder(bst_node_t *tree, bst_items_t *items)
 {
+  if (tree == NULL) return;
+  bst_postorder(tree->left, items);
+  bst_postorder(tree->right, items);
+  bst_add_node_to_items(tree, items);
 }
