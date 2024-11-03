@@ -250,6 +250,13 @@ void bst_dispose(bst_node_t **tree)
  */
 void bst_leftmost_preorder(bst_node_t *tree, stack_bst_t *to_visit, bst_items_t *items)
 {
+  if (tree == NULL) return;
+
+  while (tree != NULL) {
+    bst_add_node_to_items(tree, items);
+    stack_bst_push(to_visit, tree);
+    tree = tree->left;
+  }
 }
 
 /*
@@ -262,6 +269,20 @@ void bst_leftmost_preorder(bst_node_t *tree, stack_bst_t *to_visit, bst_items_t 
  */
 void bst_preorder(bst_node_t *tree, bst_items_t *items)
 {
+  if (tree == NULL) return;
+  stack_bst_t stack;
+  stack_bst_init(&stack);
+
+  bst_leftmost_preorder(tree, &stack, items);
+
+  while (!stack_bst_empty(&stack)) {
+    bst_node_t *node = stack_bst_top(&stack);
+    stack_bst_pop(&stack);
+
+    if (node->right != NULL) {
+      bst_leftmost_preorder(node->right, &stack, items);
+    }
+  }
 }
 
 /*
@@ -275,6 +296,12 @@ void bst_preorder(bst_node_t *tree, bst_items_t *items)
  */
 void bst_leftmost_inorder(bst_node_t *tree, stack_bst_t *to_visit)
 {
+  if (tree == NULL) return;
+
+  while (tree != NULL) {
+    stack_bst_push(to_visit, tree);
+    tree = tree->left;
+  }
 }
 
 /*
@@ -287,6 +314,19 @@ void bst_leftmost_inorder(bst_node_t *tree, stack_bst_t *to_visit)
  */
 void bst_inorder(bst_node_t *tree, bst_items_t *items)
 {
+  if (tree == NULL) return;
+  stack_bst_t stack;
+  stack_bst_init(&stack);
+
+  bst_leftmost_inorder(tree, &stack);
+
+  while (!stack_bst_empty(&stack)) {
+    bst_node_t *node = stack_bst_top(&stack);
+    stack_bst_pop(&stack);
+    bst_add_node_to_items (node, items);
+    if (node->right != NULL) 
+    bst_leftmost_inorder(node->right, &stack);
+  }
 }
 
 /*
@@ -302,6 +342,13 @@ void bst_inorder(bst_node_t *tree, bst_items_t *items)
 void bst_leftmost_postorder(bst_node_t *tree, stack_bst_t *to_visit,
                             stack_bool_t *first_visit)
 {
+  if (tree == NULL) return;
+
+  while (tree != NULL) {
+    stack_bst_push(to_visit, tree);
+    stack_bool_push(first_visit, true);
+    tree = tree->left;
+  }
 }
 
 /*
@@ -314,4 +361,25 @@ void bst_leftmost_postorder(bst_node_t *tree, stack_bst_t *to_visit,
  */
 void bst_postorder(bst_node_t *tree, bst_items_t *items)
 {
+  bool fromLeft;
+  stack_bst_t to_visit;
+  stack_bool_t first_visit;
+  stack_bst_init(&to_visit);
+  stack_bool_init(&first_visit);
+
+  bst_leftmost_postorder(tree, &to_visit, &first_visit);
+
+  while (! stack_bst_empty(&to_visit)) {
+    bst_node_t *node = stack_bst_top(&to_visit);
+    fromLeft = stack_bool_top(&first_visit);
+    stack_bool_pop(&first_visit);
+    if (fromLeft) { // from L; goes to R
+      stack_bool_push(&first_visit, false);
+      bst_leftmost_postorder(node->right, &to_visit, &first_visit);
+    }
+    else { // from R; remove and process
+      stack_bst_pop(&to_visit);
+      bst_add_node_to_items(node, items);
+    }
+  }
 }

@@ -178,7 +178,7 @@ ENDTEST
 
 TEST(test_letter_count, "Count letters");
 bst_init(&test_tree);
-letter_count(&test_tree, "abBcCc_ 123 *");
+letter_count(&test_tree, "abBccc_ 123 *");
 bst_print_tree(test_tree);
 ENDTEST
 
