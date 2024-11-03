@@ -55,13 +55,15 @@ ENDTEST
 TEST(test_insert_update, "Update an item")
 ht_init(test_table);
 INSERT_TEST_DATA(test_table)
+printf("custom_msg >> Value of Ethereum was %.2f\n", *ht_get(test_table, "Ethereum"));
 ht_insert(test_table, "Ethereum", 12.34);
+printf("custom_msg >> Value of Ethereum is %.2f\n", *ht_get(test_table, "Ethereum"));
 ENDTEST
 
 TEST(test_get, "Get an item's value")
 ht_init(test_table);
 INSERT_TEST_DATA(test_table)
-printf("custom_msg >> Value of Ethereum is %.2f", *ht_get(test_table, "Ethereum"));
+printf("custom_msg >> Value of Ethereum is %.2f\n", *ht_get(test_table, "Ethereum"));
 ENDTEST
 
 TEST(test_delete, "Delete an item")

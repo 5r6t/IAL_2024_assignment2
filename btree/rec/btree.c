@@ -111,6 +111,7 @@ void bst_replace_by_rightmost(bst_node_t *target, bst_node_t **tree)
     bst_node_t *tmp = *tree;
     *tree = (*tree)->left;
     free(tmp);
+    tmp = NULL;
   }
 }
 
@@ -147,6 +148,7 @@ void bst_delete(bst_node_t **tree, char key)
       tmp = *tree;
       *tree = (*tree)->left ? (*tree)->left : (*tree)->right; // either L or R
       free(tmp);
+      tmp = NULL;
     }
     else {
       bst_replace_by_rightmost(*tree, &((*tree)->left));

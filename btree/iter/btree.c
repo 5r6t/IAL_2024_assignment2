@@ -21,6 +21,7 @@
  */
 void bst_init(bst_node_t **tree)
 {
+  *tree = NULL;
 }
 
 /*
@@ -34,6 +35,20 @@ void bst_init(bst_node_t **tree)
  */
 bool bst_search(bst_node_t *tree, char key, bst_node_content_t **value)
 {
+  if (tree == NULL) return false;
+
+  while (tree != NULL) {
+    if (key < tree->key) {
+      tree = tree->left;
+    }
+    else if (key > tree->key) { 
+      tree = tree->right;
+    }
+    else { // (key = tree->key)
+      *value = &(tree->content);
+      return true;
+    }
+  }
   return false;
 }
 
@@ -50,6 +65,57 @@ bool bst_search(bst_node_t *tree, char key, bst_node_content_t **value)
  */
 void bst_insert(bst_node_t **tree, char key, bst_node_content_t value)
 {
+  if (*tree == NULL) { // Tree is completely empty, insert at root
+    *tree = (bst_node_t *)malloc(sizeof(bst_node_t));
+    if (*tree == NULL) {
+      fprintf(stderr, "Memory allocation failed.");
+      exit(1);
+    }
+    (*tree)->content = value;
+    (*tree)->key = key;
+    (*tree)->left = NULL;
+    (*tree)->right = NULL;
+    return;
+  }
+
+  bst_node_t *parent = *tree; // Start at the root
+
+  while (true) {
+    if (key == parent->key) { // Key already exists, update content
+      parent->content = value;
+      return;
+    }
+    else if (key < parent->key) { // Go left
+      if (parent->left == NULL) { // Insert new node as left child
+        parent->left = (bst_node_t *)malloc(sizeof(bst_node_t));
+        if (parent->left == NULL) {
+          fprintf(stderr, "Memory allocation failed.");
+          exit(1);
+        }
+        parent->left->content = value;
+        parent->left->key = key;
+        parent->left->left = NULL;
+        parent->left->right = NULL;
+        return;
+      }
+      parent = parent->left;
+    }
+    else { // Go right
+      if (parent->right == NULL) { // Insert new node as right child
+        parent->right = (bst_node_t *)malloc(sizeof(bst_node_t));
+        if (parent->right == NULL) {
+          fprintf(stderr, "Memory allocation failed.");
+          exit(1);
+        }
+        parent->right->content = value;
+        parent->right->key = key;
+        parent->right->left = NULL;
+        parent->right->right = NULL;
+        return;
+      }
+      parent = parent->right;
+    }
+  }
 }
 
 /*
@@ -67,6 +133,26 @@ void bst_insert(bst_node_t **tree, char key, bst_node_content_t value)
  */
 void bst_replace_by_rightmost(bst_node_t *target, bst_node_t **tree)
 {
+  bst_node_t *parent;
+  bst_node_t *tmp = *tree;
+
+  while(tmp->right != NULL) {
+    parent = tmp;
+    tmp = tmp->right;
+  } // until tmp pointing to rightmost
+
+  target->key = tmp->key;
+  target->content = tmp->content;
+
+  if (parent != NULL) {
+    parent->right = tmp->left;
+  } 
+  else { 
+    *tree = tmp->left; 
+  }
+
+  free(tmp);
+  tmp = NULL;
 }
 
 /*
@@ -84,6 +170,40 @@ void bst_replace_by_rightmost(bst_node_t *target, bst_node_t **tree)
  */
 void bst_delete(bst_node_t **tree, char key)
 {
+  if (*tree == NULL) return;
+
+  bst_node_t *current = *tree;
+  bst_node_t *parent = NULL;
+    
+  while (current != NULL && current->key != key) {
+    parent = current;
+    current = (key < current->key) ? current->left : current->right;
+   }
+  if (current == NULL) return;
+
+  if (current->left == NULL && current->right == NULL) {
+    if (parent == NULL) { *tree = NULL; }
+    else if (parent->left == current) { parent->left = NULL; }
+    else { parent->right = NULL; }
+    
+    free(current);
+    current = NULL;
+  } // zero sons
+
+  else if (current->left == NULL || current->right == NULL) {
+    bst_node_t *tmp = (current->left != NULL) ? current->left : current->right;
+
+    if (parent == NULL) { *tree = tmp; }
+    else if (parent->left == current) { parent->left = tmp; }
+    else { parent->right = tmp; }
+
+    free(current);
+    current = NULL;
+  } // one son
+
+  else {
+    bst_replace_by_rightmost(current, &(current->left));
+  } // two sons
 }
 
 /*
@@ -98,6 +218,25 @@ void bst_delete(bst_node_t **tree, char key)
  */
 void bst_dispose(bst_node_t **tree)
 {
+  if (*tree == NULL) return;
+
+  stack_bst_t stack;
+  stack_bst_init(&stack);
+
+  stack_bst_push(&stack, *tree);
+
+  while (stack_bst_empty(&stack)) {
+    bst_node_t *node = stack_bst_pop(&stack);
+    if (node->left != NULL) {
+      stack_bst_push(&stack, node->left);
+    }
+    if (node->right != NULL ) {
+      stack_bst_push(&stack, node->right);
+    }
+    free(node);
+    node = NULL;
+  }
+  *tree = NULL;
 }
 
 /*
