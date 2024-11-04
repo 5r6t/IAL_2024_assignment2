@@ -77,7 +77,7 @@ void ht_insert(ht_table_t *table, char *key, float value) {
   {
     ht_item_t *new_item = (ht_item_t *)malloc(sizeof(ht_item_t));
     if (new_item == NULL) {
-      return; // no <stdio.h>, returns without making changes or informing the user
+      exit(1); // no <stdio.h>, returns without making changes or informing the user
     }
     new_item->key = key;
     new_item->next = (*table)[index];
@@ -125,6 +125,7 @@ void ht_delete(ht_table_t *table, char *key) {
                 previous->next = tmp->next; // connect neighbours of tmp
             }
             free(tmp);
+            tmp = NULL;
             return; // skončíme, ak sme našli a vymazali
         }
         previous = tmp; // save current as left neighbour
