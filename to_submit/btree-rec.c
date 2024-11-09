@@ -75,6 +75,7 @@ void bst_insert(bst_node_t **tree, char key, bst_node_content_t value)
   }
   
   if (key == (*tree)->key) {
+    free((*tree)->content.value);
     (*tree)->content = value;
   }
   else if (key < (*tree)->key) {
@@ -106,8 +107,11 @@ void bst_replace_by_rightmost(bst_node_t *target, bst_node_t **tree)
     bst_replace_by_rightmost(target, &((*tree)->right));
   }
   else {
+    free(target->content.value);
+
     target->key = (*tree)->key;
     target->content = (*tree)->content;
+    
     bst_node_t *tmp = *tree;
     *tree = (*tree)->left;
     free(tmp);
@@ -141,21 +145,22 @@ void bst_delete(bst_node_t **tree, char key)
   else { // (key = (*tree)->key);
     bst_node_t *tmp;
     if ((*tree)->left == NULL && (*tree)->right == NULL) {
+      free((*tree)->content.value);
       free(*tree);
       *tree = NULL;
     }
     else if ((*tree)->left == NULL || (*tree)->right == NULL) {
       tmp = *tree;
       *tree = (*tree)->left ? (*tree)->left : (*tree)->right; // either L or R
+      free(tmp->content.value);
       free(tmp);
       tmp = NULL;
     }
     else {
       bst_replace_by_rightmost(*tree, &((*tree)->left));
-      bst_delete(&((*tree)->left), (*tree)->key);
+      //bst_delete(&((*tree)->left), (*tree)->key);
     }
   }
-
 }
 
 /*
@@ -172,6 +177,10 @@ void bst_dispose(bst_node_t **tree)
   if (*tree != NULL) {
     bst_dispose(&(*tree)->left);
     bst_dispose(&(*tree)->right);
+
+    if ((*tree)->content.value != NULL) {
+      free((*tree)->content.value);
+    }
     free(*tree);
     *tree = NULL;
   }

@@ -82,6 +82,7 @@ void bst_insert(bst_node_t **tree, char key, bst_node_content_t value)
 
   while (true) {
     if (key == parent->key) { // Key already exists, update content
+      free(parent->content.value);
       parent->content = value;
       return;
     }
@@ -133,13 +134,15 @@ void bst_insert(bst_node_t **tree, char key, bst_node_content_t value)
  */
 void bst_replace_by_rightmost(bst_node_t *target, bst_node_t **tree)
 {
-  bst_node_t *parent;
+  bst_node_t *parent = NULL;
   bst_node_t *tmp = *tree;
 
   while(tmp->right != NULL) {
     parent = tmp;
     tmp = tmp->right;
   } // until tmp pointing to rightmost
+
+  free(target->content.value);
 
   target->key = tmp->key;
   target->content = tmp->content;
@@ -150,7 +153,6 @@ void bst_replace_by_rightmost(bst_node_t *target, bst_node_t **tree)
   else { 
     *tree = tmp->left; 
   }
-
   free(tmp);
   tmp = NULL;
 }
@@ -182,10 +184,14 @@ void bst_delete(bst_node_t **tree, char key)
   if (current == NULL) return;
 
   if (current->left == NULL && current->right == NULL) {
-    if (parent == NULL) { *tree = NULL; }
-    else if (parent->left == current) { parent->left = NULL; }
-    else { parent->right = NULL; }
-    
+    if (parent == NULL) { 
+      *tree = NULL; 
+    } else if (parent->left == current) { 
+        parent->left = NULL; 
+    } else { 
+      parent->right = NULL; 
+    }
+    free(current->content.value);
     free(current);
     current = NULL;
   } // zero sons
@@ -197,6 +203,7 @@ void bst_delete(bst_node_t **tree, char key)
     else if (parent->left == current) { parent->left = tmp; }
     else { parent->right = tmp; }
 
+    free(current->content.value);
     free(current);
     current = NULL;
   } // one son
@@ -225,7 +232,7 @@ void bst_dispose(bst_node_t **tree)
 
   stack_bst_push(&stack, *tree);
 
-  while (stack_bst_empty(&stack)) {
+  while (!stack_bst_empty(&stack)) {
     bst_node_t *node = stack_bst_pop(&stack);
     if (node->left != NULL) {
       stack_bst_push(&stack, node->left);
@@ -233,6 +240,7 @@ void bst_dispose(bst_node_t **tree)
     if (node->right != NULL ) {
       stack_bst_push(&stack, node->right);
     }
+    free(node->content.value);
     free(node);
     node = NULL;
   }

@@ -189,11 +189,11 @@ int main(int argc, char *argv[]) {
 
   test_tree_init();
   test_tree_dispose_empty();
-  test_tree_search_empty();
+ test_tree_search_empty();
   test_tree_insert_root();
   test_tree_search_root();
   test_tree_update_root();
-  test_tree_insert_many();
+    test_tree_insert_many();
   test_tree_search();
   test_tree_search_missing();
   test_tree_delete_leaf();
@@ -206,7 +206,7 @@ int main(int argc, char *argv[]) {
   test_tree_preorder();
   test_tree_inorder();
   test_tree_postorder();
-
+ 
 #ifdef EXA
   test_letter_count();
 #endif // EXA
