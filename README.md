@@ -37,3 +37,6 @@ Poskytnuté testy nepokrývají vše a je doporučeno **napsat si vlastní testy
 
 ## xplagi00
 * Své řešení nikde volně nepublikujte! $$\color{red}\text{V případě plagiátorství nebo nelegální spolupráce budou odpovědné osoby uvrženy do jámy lvové.}$$
+
+# Výsledné hodnotenie 
+- 10/?b
