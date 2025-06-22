@@ -1,6 +1,4 @@
-# ial2024_du2
-
-## V druhé domácí úloze na Vás čekají následující čtyři příklady:
+# V druhé domácí úloze na Vás čekají následující čtyři příklady:
 ```bash
 - `hashtable` - tabulka s rozptýlenými položkami (3b),
 - `btree/rec` - generický binární vyhledávací strom a operace nad ním implementované rekurzivně (3b)
